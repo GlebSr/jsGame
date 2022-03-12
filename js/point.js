@@ -6,29 +6,34 @@ class point {
         this.y = y_;
     }
 
-    get x(){
+    getX(){
         return this.x;
     }
 
-    get y(){
+    getY(){
         return this.y;
     }
 
-    set x(x_ = 0){
+    setX(x_ = 0){
         this.x = x_;
     }
 
-    set y(y_ = 0){
+    setY(y_ = 0){
         this.y = y_;
     }
 
-    move(vec){
-        this.x += vec.x;
-        this.y += vec.y;
+    move(vec,speed){
+        this.x += vec.getX() * speed;
+        this.y += vec.getY() * speed;
     }
 
     setPos(x_ = 0, y_ = 0){
         this.x = x_;
         this.y = y_;
+    }
+
+    copy (p){
+        this.x = p.x;
+        this.y = p.y;
     }
 }

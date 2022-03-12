@@ -2,41 +2,49 @@ class hitBox {
     p;
     xSize;
     ySize;
-    constructor(x = 0 y = 0 xSize_ = 10 ySize = 10) {
+    constructor(x = 0, y = 0, xSize_ = 10, ySize_ = 10) {
         this.p = new point(x,y);
         this.xSize = xSize_;
         this.ySize = ySize_;
     }
 
-    get x() {
-        return this.p.x;
+    getX() {
+        return this.p.getX();
     }
 
-    get y() {
-        return this.p.y;
+    getY() {
+        return this.p.getY();
     }
 
-    get xSize() {
+    getPoint(){
+        return this.p;
+    }
+
+    setPoint(p_){
+        this.p.copy(p_);
+    }
+
+    getXSize() {
         return this.xSize;
     }
 
-    get ySize() {
+    getYSize() {
         return this.ySize;
     }
 
-    set x(x = 0) {
-        this.p.x = x;
+    setX(x = 0) {
+        this.p.setX(x);
     }
 
-    set y(y = 0) {
-        this.p.y = y;
+    setY(y = 0) {
+        this.p.setY(y);
     }
 
-    set xSize(xSize_ = 0) {
+    setXSize(xSize_ = 0) {
         this.xSize = xSize_;
     }
 
-    set ySize(ySize_ = 0) {
+    setYSize(ySize_ = 0) {
         this.ySize = ySize_;
     }
 
@@ -50,12 +58,12 @@ class hitBox {
     }
 
     collision(box) {
-        return (this.x + this.xSize > box.x && box.x + box.xSize > this.x) &&
-            (this.y + this.ySize > box.y && box.y + box.ySize > this.y);
+        return (this.getX() + this.xSize > box.getX() && box.getX() + box.getXSize() > this.getX()) &&
+            (this.getY() + this.ySize > box.getY() && box.getY() + box.getYSize() > this.getY());
     }
 
-    move(vec){
-        this.p.move(vec);
+    move(vec, speed){
+        this.p.move(vec,speed);
     }
 
     resize(xSize_, ySize_){
@@ -64,7 +72,13 @@ class hitBox {
     }
 
     getCentre(){
-        let p_ = new point((this.x + this.xSize)/2, (this.y + this.ySize)/2);
+        let p_ = new point((this.getX() + this.xSize)/2, (this.getY() + this.ySize)/2);
         return p_;
+    }
+
+    copy(box){
+        this.p.copy(box.getPoint());
+        this.xSize = box.getXSize();
+        this.ySize = box.getYSize();
     }
 }
