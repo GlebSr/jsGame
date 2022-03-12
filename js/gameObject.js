@@ -33,7 +33,7 @@ class gameObject {
     }
 
     getBox() {
-        return thix.box;
+        return this.box;
     }
 
     setBox(box_) {
@@ -104,19 +104,41 @@ class wall extends staticObject{
 }
 
 class player extends moveableObject{
-    constructor(x = 0, y = 0, xSize = 10, ySize = 10, solid = 1, used = 1, speed = 0, vecX = 0, vecY = 0){
-        super(x,y,xSize,ySize,solid,used,speed,vecX,vecY);
+    isRun;
+    xzerk;
+    stayAnim;
+    runAnim;
+    constructor(x = 0, y = 0, xSize = 10, ySize = 10, solid = 1, used = 1, speed_ = 20, vecX = 0, vecY = 0){
+        super(x,y,xSize,ySize,solid,used,speed_,vecX,vecY);
+        this.isRun = 0;
+        this.stayAnim = new anim(playerStay,10);
+        this.runAnim = new anim(playerRun,10);
+        this.xzerk = 0;
     }
 
     move(){
-        let x = 0 + keyState.d - keyState.a;
-        let y = 0 + keyState.s - keyState.w;
+        //console.log(this.getY());
+        let x = 0 + activeKey.d - activeKey.a;
+        let y = 0 + activeKey.s - activeKey.w;
+        if(x != 0 || y != 0) this.isRun = 1;
+        else this.isRun = 0;
+        if(x > 0 && this.isRun) this.xzerk = 0;
+        if(x < 0 && this.isRun) this.xzerk = 1;
         let v = new vec2d(x,y);
         this.setVec2(v);
-        this.box.move(this.vec2,this.speed);
+        //console.log(this.speed);
+        this.box.move(this.vec2,this.maxSpeed);
+        //console.log(this.getY());
     }
 
     draw(){
-        
+        //console.log(this.getY());
+        if(this.isRun){
+            this.runAnim.draw(this.getX() * k, this.getY() * k, this.getBox().getXSize() * k, this.getBox().getYSize() * k,this.xzerk);
+        }
+        else{
+
+            this.stayAnim.draw(this.getX() * k, this.getY() * k, this.getBox().getXSize() * k, this.getBox().getYSize() * k,this.xzerk);
+        }
     }
 }

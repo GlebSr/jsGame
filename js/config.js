@@ -16,3 +16,5 @@ function tileSize(){
 } //return size of tile on canvas
 var objects; //array of objects
 var pla;
+var playerStay;
+var playerRun;

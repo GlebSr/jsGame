@@ -23,8 +23,11 @@ class point {
     }
 
     move(vec,speed){
+        //console.log(this.getY());
+        //console.log(vec.getX()*speed);
         this.x += vec.getX() * speed;
         this.y += vec.getY() * speed;
+        //console.log(this.getY());
     }
 
     setPos(x_ = 0, y_ = 0){

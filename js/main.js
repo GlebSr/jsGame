@@ -19,25 +19,25 @@ function generateMap(){
 
 }
 
-function onKeydown(klick){
-    if(klick.key == 'w' || klick.key == 'ц') keyState.w = 1;
-    if(klick.key == 'a' || klick.key == 'ф') keyState.a = 1;
-    if(klick.key == 's' || klick.key == 'ы') keyState.s = 1;
-    if(klick.key == 'd' || klick.key == 'в') keyState.d = 1;
+function onKeydown(e){
+    if(e.key == 'w' || e.key == 'ц') activeKey.w = 1;
+    if(e.key == 'a' || e.key == 'ф') activeKey.a = 1;
+    if(e.key == 's' || e.key == 'ы') activeKey.s = 1;
+    if(e.key == 'd' || e.key == 'в') activeKey.d = 1;
 }
 
-function onKeyup(){
-    if(klick.key == 'w' || klick.key == 'ц') keyState.w = 0;
-    if(klick.key == 'a' || klick.key == 'ф') keyState.a = 0;
-    if(klick.key == 's' || klick.key == 'ы') keyState.s = 0;
-    if(klick.key == 'd' || klick.key == 'в') keyState.d = 0;
+function onKeyup(e){
+    if(e.key == 'w' || e.key == 'ц') activeKey.w = 0;
+    if(e.key == 'a' || e.key == 'ф') activeKey.a = 0;
+    if(e.key == 's' || e.key == 'ы') activeKey.s = 0;
+    if(e.key == 'd' || e.key == 'в') activeKey.d = 0;
 }
 
 function init() {
     window.addEventListener('keydown', onKeydown);
 	window.addEventListener('keyup', onKeyup);
     ctx = document.getElementById("canvas").getContext("2d");
-    k = 5;
+    k = 2;
     objects = new Array();
     tileTexturSize = 20;
     texturs = new Image();
@@ -51,9 +51,22 @@ function init() {
     for(let i = 100; i < 100 + tileTexturSize*1; i += tileTexturSize){
         wallTexturs[(i - 100)/tileTexturSize] = new hitBox(i,32,tileTexturSize,tileTexturSize*1.5);
     }
+
+    playerStay = new Array(8);
+    for(let i = 0; i < 200; i += 25){
+        playerStay[i/25] = new hitBox(i,0,25,31);
+    }
+
+    playerRun = new Array(4);
+    for(let i = 0; i < 100; i+= 25){
+        playerRun[i/25] = new hitBox(i,31,25,31);
+    }
+
     gameMap = new map(50,50);
     generateMap();
+    pla = new player(100,100,25,31,1,1,1);
     texturs.onload = function(){
         setInterval(render,10);
     }
+
 }

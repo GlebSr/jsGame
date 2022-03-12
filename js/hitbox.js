@@ -63,6 +63,9 @@ class hitBox {
     }
 
     move(vec, speed){
+
+        //console.log(speed);
+        //console.log(this.getY());
         this.p.move(vec,speed);
     }
 
