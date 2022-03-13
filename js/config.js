@@ -18,3 +18,4 @@ var objects; //array of objects
 var pla;
 var playerStay;
 var playerRun;
+var debug = 1;

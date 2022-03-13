@@ -8,6 +8,10 @@ class gameObject {
         this.used = used_;
     }
 
+    getBottomY(){
+        return this.box.getBottomY();
+    }
+
     getX(){
         return this.box.getX();
     }
@@ -91,29 +95,64 @@ class staticObject extends gameObject {
 }
 
 class wall extends staticObject{
-    constructor(x = 0, y = 0, xSize = 10, ySize = 10, solid = 0, speed = 0, vecX = 0, vecY = 0,){
+    constructor(x = 0, y = 0, xSize = 10, ySize = 10, solid = 1, used = 1, speed = 0){
         super(x,y,xSize,ySize,solid,used);
     }
 
     draw(){
         if(this.used){
+            ctx.drawImage(texturs,wallTexturs[0].getX(),wallTexturs[0].getY(),wallTexturs[0].getXSize(),wallTexturs[0].getYSize(),this.getX() * k,this.getY() * k - (this.box.getYSize()/2) * k, this.box.getXSize() * k, this.box.getYSize()*1.5 * k);
+        }
+        if(debug){
+            this.box.draw();
+            this.box.drawBottomY();
+        }
 
-            ctx.drawImage(texturs,wallTexturs[0].getX(),wallTexturs[0].getY(),wallTexturs[0].getXSize(),wallTexturs[0].getYSize(),this.getX() * k,this.getY() * k - (this.box.getYSize()/3) * k, this.box.getXSize() * k, this.box.getYSize() * k);
+    }
+}
+
+class entity extends moveableObject{
+    moveBox;
+    xzerk;
+    isRun;
+    stayAnim;
+    runAnim;
+    constructor(x = 0, y = 0, xSize = 10, ySize = 10, solid = 1, used = 1, speed_ = 20, stayAnim_ = playerStay, runAnim_ = playerRun, vecX = 0, vecY = 0){
+        super(x,y,xSize,ySize,solid,used,speed_,vecX,vecY);
+        this.isRun = 0;
+        this.stayAnim = new anim(stayAnim_,10);
+        this.runAnim = new anim(runAnim_,10);
+        this.xzerk = 0;
+        this.moveBox = new hitBox(x,y+ySize - tileTexturSize / 2,xSize,tileTexturSize/2);
+    }
+
+    moveCollision(object) {
+        return this.moveBox.collision(object.box);
+    }
+
+    getMoveBox(){
+        return this.moveBox;
+    }
+
+    draw(){
+        if(this.isRun){
+            this.runAnim.draw(this.getX() * k, this.getY() * k, this.getBox().getXSize() * k, this.getBox().getYSize() * k,this.xzerk);
+        }
+        else{
+
+            this.stayAnim.draw(this.getX() * k, this.getY() * k, this.getBox().getXSize() * k, this.getBox().getYSize() * k,this.xzerk);
+        }
+        if(debug){
+            this.getBox().draw();
+            this.getMoveBox().draw('red');
+            this.getBox().drawBottomY();
         }
     }
 }
 
-class player extends moveableObject{
-    isRun;
-    xzerk;
-    stayAnim;
-    runAnim;
-    constructor(x = 0, y = 0, xSize = 10, ySize = 10, solid = 1, used = 1, speed_ = 20, vecX = 0, vecY = 0){
-        super(x,y,xSize,ySize,solid,used,speed_,vecX,vecY);
-        this.isRun = 0;
-        this.stayAnim = new anim(playerStay,10);
-        this.runAnim = new anim(playerRun,10);
-        this.xzerk = 0;
+class player extends entity{
+    constructor(x = 0, y = 0, xSize = 10, ySize = 10, solid = 1, used = 1, speed = 20, stayAnim = playerStay, runAnim = playerRun, vecX = 0, vecY = 0){
+        super(x,y,xSize,ySize,solid,used,speed,stayAnim,runAnim,vecX,vecY);
     }
 
     move(){
@@ -124,21 +163,38 @@ class player extends moveableObject{
         else this.isRun = 0;
         if(x > 0 && this.isRun) this.xzerk = 0;
         if(x < 0 && this.isRun) this.xzerk = 1;
-        let v = new vec2d(x,y);
-        this.setVec2(v);
-        //console.log(this.speed);
-        this.box.move(this.vec2,this.maxSpeed);
-        //console.log(this.getY());
+
+        let vx = new vec2d(x,0);
+        let vy = new vec2d(0,y);
+        this.box.move(vx,this.maxSpeed);
+        this.moveBox.move(vx,this.maxSpeed);
+        for(let i = 0; i < objects.length; i++){
+            if(objects[i].isUsed() && objects[i].isSolid() && this.moveCollision(objects[i])){
+                for(let j = 0; j <= this.maxSpeed; j++){
+                    if(this.moveCollision(objects[i])) {
+                        this.box.move(vx,-1);
+                        this.moveBox.move(vx,-1);
+                    }
+                    else break;
+                }
+
+            }
+        }
+        this.box.move(vy,this.maxSpeed);
+        this.moveBox.move(vy,this.maxSpeed);
+        for(let i = 0; i < objects.length; i++){
+            if(objects[i].isUsed() && objects[i].isSolid() && this.moveCollision(objects[i])){
+                for(let j = 0; j <= this.maxSpeed; j++){
+                    if(this.moveCollision(objects[i])){
+                        this.box.move(vy,-1);
+                        this.moveBox.move(vy,-1);
+                    }
+                    else break;
+                }
+
+            }
+        }
     }
 
-    draw(){
-        //console.log(this.getY());
-        if(this.isRun){
-            this.runAnim.draw(this.getX() * k, this.getY() * k, this.getBox().getXSize() * k, this.getBox().getYSize() * k,this.xzerk);
-        }
-        else{
 
-            this.stayAnim.draw(this.getX() * k, this.getY() * k, this.getBox().getXSize() * k, this.getBox().getYSize() * k,this.xzerk);
-        }
-    }
 }

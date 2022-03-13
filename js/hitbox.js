@@ -63,9 +63,6 @@ class hitBox {
     }
 
     move(vec, speed){
-
-        //console.log(speed);
-        //console.log(this.getY());
         this.p.move(vec,speed);
     }
 
@@ -83,5 +80,19 @@ class hitBox {
         this.p.copy(box.getPoint());
         this.xSize = box.getXSize();
         this.ySize = box.getYSize();
+    }
+
+    draw(color = 'white'){
+        ctx.strokeStyle = color;
+        ctx.strokeRect(this.getX() * k,this.getY() * k,this.xSize * k, this.ySize * k);
+    }
+
+    getBottomY(){
+        return this.getY() + this.getYSize();
+    }
+
+    drawBottomY(color = "black"){
+        ctx.strokeStyle = color;
+        ctx.strokeRect(this.getX() * k + k*this.getXSize()/2,this.getBottomY() * k,1,1);
     }
 }

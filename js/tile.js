@@ -87,6 +87,6 @@ class tile {
     }
 
     draw(){
-        ctx.drawImage(texturs,this.texture.getX(),this.texture.getY(),this.texture.getXSize(), this.texture.getYSize(),this.getX() * k,this.getY() * k,tileSize(), tileSize());
+        ctx.drawImage(texturs,this.texture.getX(),this.texture.getY(),this.texture.getXSize(), this.texture.getYSize(),this.getX() * k ,this.getY() * k,tileSize(), tileSize());
     }
 }

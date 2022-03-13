@@ -39,6 +39,7 @@ function init() {
     ctx = document.getElementById("canvas").getContext("2d");
     k = 2;
     objects = new Array();
+
     tileTexturSize = 20;
     texturs = new Image();
     texturs.src = "images/texturs.png";
@@ -64,9 +65,15 @@ function init() {
 
     gameMap = new map(50,50);
     generateMap();
-    pla = new player(100,100,25,31,1,1,1);
+    pla = new player(100,100,25,31,1,1,1,playerStay,playerRun);
+    objects = new Array(1);
+    objects[0] = new wall(140,140,tileTexturSize,tileTexturSize,1);
     texturs.onload = function(){
+        objects.sort(function(a,b){
+            return a.getBottomY() - b.getBottomY();
+        });
         setInterval(render,10);
     }
+
 
 }
