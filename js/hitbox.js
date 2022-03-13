@@ -72,7 +72,7 @@ class hitBox {
     }
 
     getCentre(){
-        let p_ = new point((this.getX() + this.xSize)/2, (this.getY() + this.ySize)/2);
+        let p_ = new point(this.getX() + this.xSize/2, this.getY() + this.ySize/2);
         return p_;
     }
 
@@ -84,7 +84,7 @@ class hitBox {
 
     draw(color = 'white'){
         ctx.strokeStyle = color;
-        ctx.strokeRect(this.getX() * k,this.getY() * k,this.xSize * k, this.ySize * k);
+        ctx.strokeRect(this.getX() * k + cam.getX(),this.getY() * k + cam.getY(),this.xSize * k, this.ySize * k);
     }
 
     getBottomY(){
@@ -93,6 +93,6 @@ class hitBox {
 
     drawBottomY(color = "black"){
         ctx.strokeStyle = color;
-        ctx.strokeRect(this.getX() * k + k*this.getXSize()/2,this.getBottomY() * k,1,1);
+        ctx.strokeRect(this.getX() * k + k*this.getXSize()/2 + cam.getX(),this.getBottomY() * k + cam.getY(),1,1);
     }
 }

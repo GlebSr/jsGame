@@ -8,6 +8,10 @@ class gameObject {
         this.used = used_;
     }
 
+    getCentre(){
+        return this.box.getCentre();
+    }
+
     getBottomY(){
         return this.box.getBottomY();
     }
@@ -101,7 +105,7 @@ class wall extends staticObject{
 
     draw(){
         if(this.used){
-            ctx.drawImage(texturs,wallTexturs[0].getX(),wallTexturs[0].getY(),wallTexturs[0].getXSize(),wallTexturs[0].getYSize(),this.getX() * k,this.getY() * k - (this.box.getYSize()/2) * k, this.box.getXSize() * k, this.box.getYSize()*1.5 * k);
+            ctx.drawImage(texturs,wallTexturs[0].getX(),wallTexturs[0].getY(),wallTexturs[0].getXSize(),wallTexturs[0].getYSize(),this.getX() * k + cam.getX(),this.getY() * k - (this.box.getYSize()/2) * k + cam.getY(), this.box.getXSize() * k, this.box.getYSize()*1.5 * k);
         }
         if(debug){
             this.box.draw();
@@ -136,11 +140,11 @@ class entity extends moveableObject{
 
     draw(){
         if(this.isRun){
-            this.runAnim.draw(this.getX() * k, this.getY() * k, this.getBox().getXSize() * k, this.getBox().getYSize() * k,this.xzerk);
+            this.runAnim.draw(this.getX() * k + cam.getX(), this.getY() * k + cam.getY(), this.getBox().getXSize() * k, this.getBox().getYSize() * k,this.xzerk);
         }
         else{
 
-            this.stayAnim.draw(this.getX() * k, this.getY() * k, this.getBox().getXSize() * k, this.getBox().getYSize() * k,this.xzerk);
+            this.stayAnim.draw(this.getX() * k + cam.getX(), this.getY() * k + cam.getY(), this.getBox().getXSize() * k, this.getBox().getYSize() * k,this.xzerk);
         }
         if(debug){
             this.getBox().draw();
@@ -163,9 +167,9 @@ class player extends entity{
         else this.isRun = 0;
         if(x > 0 && this.isRun) this.xzerk = 0;
         if(x < 0 && this.isRun) this.xzerk = 1;
-
-        let vx = new vec2d(x,0);
-        let vy = new vec2d(0,y);
+        let v = new vec2d(x,y);
+        let vx = new vec2d(v.getX(),0);
+        let vy = new vec2d(0,v.getY());
         this.box.move(vx,this.maxSpeed);
         this.moveBox.move(vx,this.maxSpeed);
         for(let i = 0; i < objects.length; i++){

@@ -19,3 +19,4 @@ var pla;
 var playerStay;
 var playerRun;
 var debug = 1;
+var cam;

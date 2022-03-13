@@ -60,7 +60,7 @@ function init() {
 
     playerRun = new Array(4);
     for(let i = 0; i < 100; i+= 25){
-        playerRun[i/25] = new hitBox(i,31,25,31);
+        playerRun[i/25] = new hitBox(i,31,25,30.5);
     }
 
     gameMap = new map(50,50);
@@ -68,6 +68,7 @@ function init() {
     pla = new player(100,100,25,31,1,1,1,playerStay,playerRun);
     objects = new Array(1);
     objects[0] = new wall(140,140,tileTexturSize,tileTexturSize,1);
+    cam = new point(0,0);
     texturs.onload = function(){
         objects.sort(function(a,b){
             return a.getBottomY() - b.getBottomY();

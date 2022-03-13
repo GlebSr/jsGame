@@ -7,8 +7,14 @@ class vec2d {
             this.y = 0;
         }
         else{
-            this.x = x_/Math.sqrt(x_*x_ + y_*y_);
-            this.y = y_/Math.sqrt(x_*x_ + y_*y_);
+            if(x_*x_ + y_*y_ >= 1){
+                this.x = x_/Math.sqrt(x_*x_ + y_*y_);
+                this.y = y_/Math.sqrt(x_*x_ + y_*y_);
+            }
+            else{
+                this.x = x_;
+                this.y = y_;
+            }
         }
 
     }
