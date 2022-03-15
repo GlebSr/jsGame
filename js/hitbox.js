@@ -3,7 +3,7 @@ class hitBox {
     xSize;
     ySize;
     constructor(x = 0, y = 0, xSize_ = 10, ySize_ = 10) {
-        this.p = new point(x,y);
+        this.p = new point(x, y);
         this.xSize = xSize_;
         this.ySize = ySize_;
     }
@@ -16,11 +16,11 @@ class hitBox {
         return this.p.getY();
     }
 
-    getPoint(){
+    getPoint() {
         return this.p;
     }
 
-    setPoint(p_){
+    setPoint(p_) {
         this.p.copy(p_);
     }
 
@@ -49,7 +49,7 @@ class hitBox {
     }
 
     setPos(x = 0, y = 0) {
-        this.p.setPos(x,y);
+        this.p.setPos(x, y);
     }
 
     setSize(xSize_ = 10, ySize_ = 10) {
@@ -62,37 +62,37 @@ class hitBox {
             (this.getY() + this.ySize > box.getY() && box.getY() + box.getYSize() > this.getY());
     }
 
-    move(vec, speed){
-        this.p.move(vec,speed);
+    move(vec, speed) {
+        this.p.move(vec, speed);
     }
 
-    resize(xSize_, ySize_){
+    resize(xSize_, ySize_) {
         this.xSize = xSize_;
         this.ySize = ySize_;
     }
 
-    getCentre(){
-        let p_ = new point(this.getX() + this.xSize/2, this.getY() + this.ySize/2);
+    getCentre() {
+        let p_ = new point(this.getX() + this.xSize / 2, this.getY() + this.ySize / 2);
         return p_;
     }
 
-    copy(box){
+    copy(box) {
         this.p.copy(box.getPoint());
         this.xSize = box.getXSize();
         this.ySize = box.getYSize();
     }
 
-    draw(color = 'white'){
+    draw(color = 'white') {
         ctx.strokeStyle = color;
-        ctx.strokeRect(this.getX() * k + cam.getX(),this.getY() * k + cam.getY(),this.xSize * k, this.ySize * k);
+        ctx.strokeRect(Math.round(this.getX() * k + cam.getX()), Math.round(this.getY() * k + cam.getY()), Math.round(this.xSize * k), Math.round(this.ySize * k));
     }
 
-    getBottomY(){
+    getBottomY() {
         return this.getY() + this.getYSize();
     }
 
-    drawBottomY(color = "black"){
+    drawBottomY(color = "black") {
         ctx.strokeStyle = color;
-        ctx.strokeRect(this.getX() * k + k*this.getXSize()/2 + cam.getX(),this.getBottomY() * k + cam.getY(),1,1);
+        ctx.strokeRect(Math.round(this.getX() * k + k * this.getXSize() / 2 + cam.getX()), Math.round(this.getBottomY() * k + cam.getY()), 1, 1);
     }
 }

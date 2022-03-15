@@ -5,68 +5,69 @@ class tile {
     type;
     texture;
     constructor(x = 0, y = 0, type_ = 0) {
-        this.box = new hitBox(x, y, tileTexturSize, tileTexturSize);
+        this.box = new hitBox(x, y, sizes.tileTexturSize, sizes.tileTexturSize);
         this.texture = new hitBox();
         this.setType(type_);
 
     }
-    getX(){
+
+    getX() {
         return this.box.getX();
     }
 
-    setX(x_){
+    setX(x_) {
         this.box.setX(x_);
     }
 
-    getY(){
+    getY() {
         return this.box.getY();
     }
 
-    setY(y_){
+    setY(y_) {
         this.box.setY(y_);
     }
 
-    getPos(){
+    getPos() {
         return this.box.getPoint();
     }
 
-    setPos(p_){
+    setPos(p_) {
         this.box.setPoint(p_);
     }
 
-    getBox(){
+    getBox() {
         return this.box;
     }
 
-    setBox(box_){
+    setBox(box_) {
         this.box.copy(box_);
     }
 
-    isFree(){
+    isFree() {
         return this.free;
     }
 
-    isSolid(){
+    isSolid() {
         return this.solid;
     }
 
-    setFree(free_){
+    setFree(free_) {
         this.free = free_;
     }
 
-    setSolid(solid_){
+    setSolid(solid_) {
         this.solid = solid_;
     }
 
-    collision(object){
+    collision(object) {
         return this.box.collision(object.getBox());
     }
 
-    getType(){
+    getType() {
         return this.type;
     }
 
-    setType(type_){
+    setType(type_) {
         switch (type_) {
             case 0:
                 this.free = true;
@@ -86,7 +87,7 @@ class tile {
         this.type = type_;
     }
 
-    draw(){
-        ctx.drawImage(texturs,this.texture.getX(),this.texture.getY(),this.texture.getXSize(), this.texture.getYSize(),this.getX() * k + cam.getX() ,this.getY() * k + cam.getY(),tileSize(), tileSize());
+    draw() {
+        ctx.drawImage(texturs, Math.round(this.texture.getX()), Math.round(this.texture.getY()), Math.round(this.texture.getXSize()), Math.round(this.texture.getYSize()), Math.round(this.getX() * k + cam.getX()), Math.round(this.getY() * k + cam.getY()), Math.round(sizes.tileTexturSize * k), Math.round(sizes.tileTexturSize * k));
     }
 }

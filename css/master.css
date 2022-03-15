@@ -1,12 +1,22 @@
-body{
+@font-face {
+    font-family: 'myFont';
+    src: url('../my_font.ttf') format('truetype');
+}
+
+body {
     margin: 0px 0px 0px 0px;
     padding: 0px 0px 0px 0px;
-  background-color: #777799;
+    background-color: #777799;
 }
-canvas{
+
+canvas {
     position: absolute;
     left: 0;
     top: 0;
     margin: 0px 0px 0px 0px;
     padding: 0px 0px 0px 0px;
+}
+
+canvas{
+    font-family: myFont;
 }

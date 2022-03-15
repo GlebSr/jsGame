@@ -1,41 +1,38 @@
 class point {
     x;
     y;
-    constructor(x_ = 0,y_ = 0) {
+    constructor(x_ = 0, y_ = 0) {
         this.x = x_;
         this.y = y_;
     }
 
-    getX(){
+    getX() {
         return this.x;
     }
 
-    getY(){
+    getY() {
         return this.y;
     }
 
-    setX(x_ = 0){
+    setX(x_ = 0) {
         this.x = x_;
     }
 
-    setY(y_ = 0){
+    setY(y_ = 0) {
         this.y = y_;
     }
 
-    move(vec,speed){
-        //console.log(this.getY());
-        //console.log(vec.getX()*speed);
+    move(vec, speed) {
         this.x += vec.getX() * speed;
         this.y += vec.getY() * speed;
-        //console.log(this.getY());
     }
 
-    setPos(x_ = 0, y_ = 0){
+    setPos(x_ = 0, y_ = 0) {
         this.x = x_;
         this.y = y_;
     }
 
-    copy (p){
+    copy(p) {
         this.x = p.x;
         this.y = p.y;
     }
