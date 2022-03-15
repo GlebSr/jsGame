@@ -5,6 +5,11 @@ var szWindow = {
     'x': 0,
     'y': 0
 };
+
+var mousePos = {
+    x: 0,
+    y: 0
+}
 var activeKey = {
     w: 0,
     a: 0,
@@ -42,3 +47,10 @@ var sizes = {
 var barTexturs;
 
 //types 1 - wall, -1 - player, 2 - small red bullet
+var test;
+var testWeapon;
+
+var pistolTexturs;
+var machineGunTexturs;
+var shotgunTexturs;
+var crossbowTexturs;

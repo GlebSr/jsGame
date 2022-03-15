@@ -58,11 +58,11 @@ class gameObject {
         this.used = used_;
     }
 
-    collision(object) {
-        return this.box.collision(object.box);
+    collision(obj) {
+        return this.box.collision(obj.getBox());
     }
 
-    getType(){
+    getType() {
         return this.type;
     }
 }
@@ -71,7 +71,7 @@ class moveableObject extends gameObject {
     vec2;
     maxSpeed;
     constructor(type = 0, x = 0, y = 0, xSize = 10, ySize = 10, solid = 0, used = 0, speed = 0, vecX = 0, vecY = 0) {
-        super(type, x, y, xSize, ySize, solid, used,speed,vecX,vecY);
+        super(type, x, y, xSize, ySize, solid, used, speed, vecX, vecY);
         this.maxSpeed = speed;
         this.vec2 = new vec2d(vecX, vecY);
     }
@@ -98,14 +98,14 @@ class moveableObject extends gameObject {
 }
 //_________________________________________
 class staticObject extends gameObject {
-    constructor(type = 0,x = 0, y = 0, xSize = 10, ySize = 10, solid = 0, used = 0,) {
+    constructor(type = 0, x = 0, y = 0, xSize = 10, ySize = 10, solid = 0, used = 0, ) {
         super(type, x, y, xSize, ySize, solid, used);
     }
 }
 //_________________________________________
 class wall extends staticObject {
     constructor(x = 0, y = 0, solid = 1, used = 1) {
-        super(types.wallType,x, y, sizes.tileTexturSize, sizes.tileTexturSize, solid, used);
+        super(types.wallType, x, y, sizes.tileTexturSize, sizes.tileTexturSize, solid, used);
     }
     draw() {
         if (this.used) {
@@ -127,7 +127,7 @@ class entity extends moveableObject {
     runAnim;
     hp;
     maxHp;
-    constructor(type = 0,x = 0, y = 0, xSize = 10, ySize = 10, solid = 1, used = 1, speed_ = 20, stayAnim_ = playerStay, runAnim_ = playerRun, maxHp_ = 10, hp_ = 10, vecX = 0, vecY = 0) {
+    constructor(type = 0, x = 0, y = 0, xSize = 10, ySize = 10, solid = 1, used = 1, speed_ = 20, stayAnim_ = playerStay, runAnim_ = playerRun, maxHp_ = 10, hp_ = 10, vecX = 0, vecY = 0) {
         super(type, x, y, xSize, ySize, solid, used, speed_, vecX, vecY);
         this.maxHp = maxHp_;
         this.hp = hp_;
@@ -142,19 +142,19 @@ class entity extends moveableObject {
         return this.moveBox.collision(object.box);
     }
 
-    getHp(){
+    getHp() {
         return this.hp;
     }
 
-    setHp(hp_){
+    setHp(hp_) {
         this.hp = hp_;
     }
 
-    getMaxHp(){
+    getMaxHp() {
         return this.maxHp;
     }
 
-    setMaxHp(maxHp_){
+    setMaxHp(maxHp_) {
         this.maxHp = maxHp_;
     }
 
@@ -167,13 +167,17 @@ class entity extends moveableObject {
             this.runAnim.draw(this.getX() * k + cam.getX(), this.getY() * k + cam.getY(), this.getBox().getXSize() * k, this.getBox().getYSize() * k, this.xzerk);
         } else {
 
-            this.stayAnim.draw(this.getX() * k + cam.getX(), this.getY() * k + cam.getY(), this.getBox().getXSize() * k, this.getBox().getYSize() * k, this.xzerk);
+            this.stayAnim.draw(this.getX() * k + cam.getX(), this.getY() * k + cam.getY(), this.getBox().getXSize() * k, this.getBox().getYSize() * k, mousePos.x < szWindow.x / 2);
         }
         if (debug) {
             this.getBox().draw();
             this.getMoveBox().draw('red');
             this.getBox().drawBottomY();
         }
+    }
+    damage(damage) {
+        this.hp -= damage;
+        if (this.hp <= 0) used = 0;
     }
 }
 
@@ -182,43 +186,47 @@ class player extends entity {
     defence;
     maxAmmo;
     ammo;
-    constructor(x = 0, y = 0, speed = 2,maxHp = 10, hp = 10, maxDefence_ = 7, defence_ = 7, maxAmmo_ = 200, ammo_ = 200, vecX = 0, vecY = 0) {
-        super(types.playerType,x, y, sizes.playerXSize, sizes.playerYSize, 1, 1, speed, playerStay, playerRun, maxHp, hp, vecX, vecY);
+    alive;
+    currentWeapon;
+    constructor(x = 0, y = 0, speed = 2, maxHp = 10, hp = 10, maxDefence_ = 7, defence_ = 7, maxAmmo_ = 200, ammo_ = 200, vecX = 0, vecY = 0) {
+        super(types.playerType, x, y, sizes.playerXSize, sizes.playerYSize, 1, 1, speed, playerStay, playerRun, maxHp, hp, vecX, vecY);
         this.maxDefence = maxDefence_;
         this.defence = defence_;
         this.maxAmmo = maxAmmo_;
         this.ammo = ammo_;
+        this.alive = 1;
+        this.currentWeapon = 0;
     }
 
-    getMaxDefence(){
+    getMaxDefence() {
         return this.maxDefence;
     }
 
-    getMaxAmmo(){
+    getMaxAmmo() {
         return this.maxAmmo;
     }
 
-    getDefence(){
+    getDefence() {
         return this.defence;
     }
 
-    getAmmo(){
+    getAmmo() {
         return this.ammo;
     }
 
-    setMaxDefence(md){
+    setMaxDefence(md) {
         this.maxDefence = md;
     }
 
-    setMaxAmmo(ma){
+    setMaxAmmo(ma) {
         this.maxAmmo = ma;
     }
 
-    setDefence(d){
+    setDefence(d) {
         this.defence = d;
     }
 
-    setAmmo(a){
+    setAmmo(a) {
         this.ammo = a;
     }
 
@@ -271,16 +279,37 @@ class player extends entity {
         }
 
     }
+    damage(dm) {
+        if (this.defence >= dm) {
+            this.defence -= dm;
+        } else {
+            dm -= this.defence;
+            this.defence = 0;
+            if (this.hp <= dm) {
+                this.hp = 0;
+                this.alive = 0;
+            } else this.hp -= dm;
+        }
+
+    }
+
+    isAlive() {
+        return this.alive;
+    }
+
+    kill() {
+        this.alive = 0;
+    }
 }
 
-class bullet extends moveableObject{
+class bullet extends moveableObject {
     damage;
-    constructor(type = 2, x = 0,y = 0,xSize = 0,ySize = 0,used = 1 ,speed = 2,xVec = 0,yVec = 0, damage_ = 0){
-        super(type,x,y,xSize,ySize,0,used,speed,xVec,yVec);
+    constructor(type = 2, x = 0, y = 0, xSize = 0, ySize = 0, used = 1, speed = 2, xVec = 0, yVec = 0, damage_ = 0) {
+        super(type, x, y, xSize, ySize, 0, used, speed, xVec, yVec);
         this.damage = damage_;
     }
 
-    draw(){
+    draw() {
         if (this.used) {
             ctx.drawImage(texturs, Math.round(bull.getX()), Math.round(bull.getY()), Math.round(bull.getXSize()), Math.round(bull.getYSize()), Math.round(this.getX() * k + cam.getX()), Math.round(this.getY() * k + cam.getY()), Math.round(this.box.getXSize() * k), Math.round(this.box.getYSize() * k));
         }
@@ -291,14 +320,43 @@ class bullet extends moveableObject{
     }
 }
 
-class smallEnemyBullet extends bullet{
-    constructor(x = 0, y = 0,used = 1, speed = 2, xVec = 0, yVec = 0, damage = 1){
-        super(types.enemyBulletType,x,y,sizes.smallBulletSize,sizes.smallBulletSize,used,speed,xVec,yVec,damage);
+class smallEnemyBullet extends bullet {
+    constructor(x = 0, y = 0, used = 1, speed = 2, xVec = 0, yVec = 0, damage = 1) {
+        super(types.enemyBulletType, x, y, sizes.smallBulletSize, sizes.smallBulletSize, used, speed, xVec, yVec, damage);
+    }
+    collision() {
+        if (pla.collision(this)) {
+            pla.damage(this.damage);
+            return 1;
+        }
+        for (let i = 0; i < objects.length; i++) {
+            if (objects[i].isUsed() && objects[i].isSolid() && objects[i].collision(this)) {
+                return 1;
+            }
+        }
+        if (this.getX() <= 0 || this.getX() >= gameMap.getSizeX() * sizes.tileTexturSize) return 1;
+        if (this.getY() <= 0 || this.getY() >= gameMap.getSizeY() * sizes.tileTexturSize) return 1;
+        return 0;
     }
 }
 
-class bigEnemyBullet extends bullet{
-    constructor(x = 0, y = 0,used = 1, speed = 1, xVec = 0, yVec = 0, damage = 3){
-        super(types.enemyBulletType,x,y,sizes.BigBulletSize,sizes.BigBulletSize,used,speed,xVec,yVec,damage);
+class bigEnemyBullet extends bullet {
+    constructor(x = 0, y = 0, used = 1, speed = 1, xVec = 0, yVec = 0, damage = 3) {
+        super(types.enemyBulletType, x, y, sizes.BigBulletSize, sizes.BigBulletSize, used, speed, xVec, yVec, damage);
+    }
+
+    collision() {
+        if (pla.collision(this)) {
+            pla.damage(this.damage);
+            return 1;
+        }
+        for (let i = 0; i < objects.length; i++) {
+            if (objects[i].isUsed() && objects[i].isSolid() && objects[i].collision(this)) {
+                return 1;
+            }
+        }
+        if (this.getX() <= 0 || this.getX() >= gameMap.getSizeX() * sizes.tileTexturSize) return 1;
+        if (this.getY() <= 0 || this.getY() >= gameMap.getSizeY() * sizes.tileTexturSize) return 1;
+        return 0;
     }
 }

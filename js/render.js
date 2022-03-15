@@ -8,9 +8,10 @@ function render() {
         objects[i].draw();
     }
     pla.draw();
+    machineGun.draw();
     for (; i < objects.length; i++) {
         objects[i].draw();
     }
     bar.draw();
-    console.log(pla.getHp());
+
 }

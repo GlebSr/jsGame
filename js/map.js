@@ -40,10 +40,10 @@ class map {
     }
 
     draw() {
-        let a = Math.round((pla.getY() - szWindow.y/k)/ sizes.tileTexturSize - 1);
-        let b = Math.round((pla.getY() + szWindow.y/k)/ sizes.tileTexturSize + 1);
-        let a1 = Math.round((pla.getX() - szWindow.x/k)/ sizes.tileTexturSize - 1);
-        let b1 = Math.round((pla.getX() + szWindow.x/k)/ sizes.tileTexturSize + 1);
+        let a = Math.round((pla.getY() - szWindow.y / k) / sizes.tileTexturSize - 1);
+        let b = Math.round((pla.getY() + szWindow.y / k) / sizes.tileTexturSize + 1);
+        let a1 = Math.round((pla.getX() - szWindow.x / k) / sizes.tileTexturSize - 1);
+        let b1 = Math.round((pla.getX() + szWindow.x / k) / sizes.tileTexturSize + 1);
         for (let y = a <= 0 ? 0 : a; y < b && y < this.sizeY; y++) {
             for (let x = a1 <= 0 ? 0 : a1; x < b1 && x < this.sizeX; x++) {
                 this.tiles[y][x].draw();
