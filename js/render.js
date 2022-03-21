@@ -1,6 +1,7 @@
 function render() {
     getMousePos();
     onResize();
+
     if(menuStage == 1){
         if(!pause){
             processing();
@@ -9,12 +10,12 @@ function render() {
         gameMap.draw();
         let i = 0;
         for (; i < objects.length && objects[i].getBottomY() < pla.getBottomY(); i++) {
-            objects[i].draw();
+            if(Math.abs(objects[i].getX() - pla.getX())*k < szWindow.x/1.5 && Math.abs(objects[i].getY() - pla.getY())*k < szWindow.y/1.5)objects[i].draw();
         }
         pla.draw();
         inv.draw();
         for (; i < objects.length; i++) {
-            objects[i].draw();
+            if(Math.abs(objects[i].getX() - pla.getX())*k < szWindow.x/1.5 && Math.abs(objects[i].getY() - pla.getY())*k < szWindow.y/1.5)objects[i].draw();
         }
         bar.draw();
         drawHud();
@@ -29,6 +30,7 @@ function render() {
     if(menuStage == 2){
         endMen.draw();
     }
+    //console.log(objects.length);
 
 }
 

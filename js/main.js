@@ -111,6 +111,7 @@ function start() {
 }
 
 function init() {
+    score = 0;
     spawnRate = 500;
     toSpawn = 500;
     menuStage = 1;
@@ -137,7 +138,7 @@ function init() {
         smallPlayerBulletDamage: 2,
         mediumPlayerBulletDamage: 5,
         bigPlayerBulletDamage: 3,
-        arrowDamage: 7
+        arrowDamage: 10
     };
     bulletSpeeds = {
         smallEnemyBulletSpeed: 4,
@@ -151,8 +152,9 @@ function init() {
     objects = new Array();
 
     gameMap = new map(100, 100);
-    pla = new player(100, 100, 1, 10, 10, 7, 7, 200, 200);
+    pla = new player(20, 5, 1, 10, 10, 7, 7, 200, 200);
     objects = new Array();
+
     cam = new point(0, 0);
     bull = new hitBox(120, 31, 9, 9);
     generateMap();
@@ -213,4 +215,15 @@ function textursLoad() {
     button = new hitBox(33,116,120,20);
     onButton = new hitBox(33,136,120,19);
     ammoTexture = new hitBox(141,32,6,6);
+
+
+    enemyStay = new Array(8);
+    for (let i = 0; i < 200; i += 25) {
+        enemyStay[i / 25] = new hitBox(i, 155, sizes.playerXSize, sizes.playerYSize);
+    }
+
+    enemyRun = new Array(4);
+    for (let i = 0; i < 100; i += 25) {
+        enemyRun[i / 25] = new hitBox(i, 186, sizes.playerXSize, sizes.playerYSize);
+    }
 }

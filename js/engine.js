@@ -42,6 +42,7 @@ function processing() {
                     pla.pickupAmmo(objects[i].getAmmo());
                     objects.splice(i, 1);
                     i--;
+                    score++;
                 }
                 break;
             default:

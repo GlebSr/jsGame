@@ -451,10 +451,11 @@ class arrow extends playerBullet{
 class enemy extends entity{
     toRecharge;
     attackSpeed;
-    constructor(x = 0, y = 0, xSize = 10,ySize = 10, speed = 2, stayAnim = playerStay, runAnim = playerRun, maxHp = 10, hp = 10, xVec = 0, yVec = 0){
+    constructor(x = 0, y = 0, xSize = 10,ySize = 10, speed = 2, stayAnim = enemyStay, runAnim = enemyRun, maxHp = 10, hp = 10, xVec = 0, yVec = 0){
         super(4,x,y,xSize,ySize,0,1,speed,stayAnim,runAnim,maxHp,hp,xVec,yVec);
         this.toRecharge = 200;
         this.attackSpeed = 200;
+        this.isRun = 1;
     }
     draw() {
         if (this.isRun) {
@@ -472,8 +473,46 @@ class enemy extends entity{
     move(){
         let x = pla.getX() - this.getX();
         let y = pla.getY() - this.getY();
-        let v = new vec2d(x,y);
-        this.box.move(v,this.maxSpeed);
+        //let v = new vec2d(x,y);
+        //this.box.move(v,this.maxSpeed);
+
+
+
+        let v = new vec2d(x, y);
+        let vx = new vec2d(v.getX(), 0);
+        let vy = new vec2d(0, v.getY());
+
+        this.box.move(vx, this.maxSpeed);
+        this.moveBox.move(vx, this.maxSpeed);
+
+        for (let i = 0; i < objects.length; i++) {
+            if (objects[i].isUsed() && objects[i].isSolid() && this.moveCollision(objects[i])) {
+                for (let j = 0; j <= this.maxSpeed; j++) {
+                    if (this.moveCollision(objects[i])) {
+                        this.box.move(vx, -1);
+                        this.moveBox.move(vx, -1);
+                    } else break;
+                }
+
+            }
+        }
+
+        this.box.move(vy, this.maxSpeed);
+        this.moveBox.move(vy, this.maxSpeed);
+
+        for (let i = 0; i < objects.length; i++) {
+            if (objects[i].isUsed() && objects[i].isSolid() && this.moveCollision(objects[i])) {
+                for (let j = 0; j <= this.maxSpeed; j++) {
+                    if (this.moveCollision(objects[i])) {
+                        this.box.move(vy, -1);
+                        this.moveBox.move(vy, -1);
+                    } else break;
+                }
+
+            }
+        }
+
+
         if(Math.sqrt(x*x+y*y) < 300){
             if(!this.toRecharge){
                 let b = new smallEnemyBullet(this.getX(),this.getY(),2,x,y,damages.smallEnemyBulletDamage);
@@ -481,6 +520,8 @@ class enemy extends entity{
                 this.toRecharge = this.attackSpeed;
             }else this.toRecharge--;
         }
+
+
     }
 
     damage(damage) {

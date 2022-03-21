@@ -27,6 +27,9 @@ var menuStage = 0;
 var spawnRate;
 var toSpawn;
 var ammoTexture;
+var enemySaty;
+var enemyRun;
+var score = 0;
 var szWindow = {
     'x': 0,
     'y': 0
@@ -69,7 +72,7 @@ var damages = {
     smallPlayerBulletDamage: 2,
     mediumPlayerBulletDamage: 5,
     bigPlayerBulletDamage: 3,
-    arrowDamage: 7
+    arrowDamage: 10
 };
 var bulletSpeeds = {
     smallEnemyBulletSpeed: 4,

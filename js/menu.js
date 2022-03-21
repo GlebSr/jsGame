@@ -5,9 +5,9 @@ class inventory {
         this.iWeapon = 0;
         this.weapons = new Array(4);
         this.weapons[0] = new pistol(1,60,1,1);
-        this.weapons[1] = new machineGun(1,20,1,1);
+        this.weapons[1] = new machineGun(1,15,1,1);
         this.weapons[2] = new shotgun(1,100,1,1);
-        this.weapons[3] = new crossbow(1,150,1,1);
+        this.weapons[3] = new crossbow(1,200,1,1);
     }
     shoot(){
         if(activeKey.l){
@@ -132,6 +132,8 @@ class endMenu{
         ctx.font =  k * 30 + "px myFont";
         let s = "GG";
         ctx.fillText(s,szWindow.x/2 - 34*k,szWindow.y/3);
-
+        s = "your score = " + score;
+        ctx.font =  k * 10 + "px myFont";
+        ctx.fillText(s,0 + 5*k,5*k + k * 10);
     }
 }
