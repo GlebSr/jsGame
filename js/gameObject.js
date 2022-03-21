@@ -98,14 +98,14 @@ class moveableObject extends gameObject {
 }
 //_________________________________________
 class staticObject extends gameObject {
-    constructor(type = 0, x = 0, y = 0, xSize = 10, ySize = 10, solid = 0, used = 0, ) {
-        super(type, x, y, xSize, ySize, solid, used);
+    constructor(type = 0, x = 0, y = 0, xSize = 10, ySize = 10, solid = 0) {
+        super(type, x, y, xSize, ySize, solid,1);
     }
 }
 //_________________________________________
 class wall extends staticObject {
-    constructor(x = 0, y = 0, solid = 1, used = 1) {
-        super(types.wallType, x, y, sizes.tileTexturSize, sizes.tileTexturSize, solid, used);
+    constructor(x = 0, y = 0, solid = 1) {
+        super(types.wallType, x, y, sizes.tileTexturSize, sizes.tileTexturSize, solid);
     }
     draw() {
         if (this.used) {
@@ -162,12 +162,19 @@ class entity extends moveableObject {
         return this.moveBox;
     }
 
+    damage(dmg){
+        this.hp -= dmg;
+        if(hp <= 0){
+            this.used = 0;
+        }
+    }
+
     draw() {
         if (this.isRun) {
             this.runAnim.draw(this.getX() * k + cam.getX(), this.getY() * k + cam.getY(), this.getBox().getXSize() * k, this.getBox().getYSize() * k, this.xzerk);
         } else {
 
-            this.stayAnim.draw(this.getX() * k + cam.getX(), this.getY() * k + cam.getY(), this.getBox().getXSize() * k, this.getBox().getYSize() * k, mousePos.x < szWindow.x / 2);
+            this.stayAnim.draw(this.getX() * k + cam.getX(), this.getY() * k + cam.getY(), this.getBox().getXSize() * k, this.getBox().getYSize() * k, this.xzerk);
         }
         if (debug) {
             this.getBox().draw();
@@ -177,7 +184,7 @@ class entity extends moveableObject {
     }
     damage(damage) {
         this.hp -= damage;
-        if (this.hp <= 0) used = 0;
+        if (this.hp <= 0) this.used = 0;
     }
 }
 
@@ -188,6 +195,8 @@ class player extends entity {
     ammo;
     alive;
     currentWeapon;
+    defenceRecharge;
+    toRecharge;
     constructor(x = 0, y = 0, speed = 2, maxHp = 10, hp = 10, maxDefence_ = 7, defence_ = 7, maxAmmo_ = 200, ammo_ = 200, vecX = 0, vecY = 0) {
         super(types.playerType, x, y, sizes.playerXSize, sizes.playerYSize, 1, 1, speed, playerStay, playerRun, maxHp, hp, vecX, vecY);
         this.maxDefence = maxDefence_;
@@ -196,6 +205,8 @@ class player extends entity {
         this.ammo = ammo_;
         this.alive = 1;
         this.currentWeapon = 0;
+        this.defenceRecharge = 200;
+        this.toRecharge = 0;
     }
 
     getMaxDefence() {
@@ -231,6 +242,13 @@ class player extends entity {
     }
 
     move() {
+        if(this.getDefence() < this.getMaxDefence()){
+            if(!this.toRecharge){
+                this.defence += 1;
+                this.toRecharge = this.defenceRecharge;
+            }
+            else this.toRecharge--;
+        }
         let x = 0 + activeKey.d - activeKey.a;
         let y = 0 + activeKey.s - activeKey.w;
 
@@ -288,6 +306,7 @@ class player extends entity {
             if (this.hp <= dm) {
                 this.hp = 0;
                 this.alive = 0;
+                menuStage = 2;
             } else this.hp -= dm;
         }
 
@@ -300,18 +319,51 @@ class player extends entity {
     kill() {
         this.alive = 0;
     }
+    draw() {
+        if (this.isRun) {
+            this.runAnim.draw(this.getX() * k + cam.getX(), this.getY() * k + cam.getY(), this.getBox().getXSize() * k, this.getBox().getYSize() * k, this.xzerk);
+        } else {
+
+            this.stayAnim.draw(this.getX() * k + cam.getX(), this.getY() * k + cam.getY(), this.getBox().getXSize() * k, this.getBox().getYSize() * k, mousePos.x < szWindow.x / 2);
+        }
+        if (debug) {
+            this.getBox().draw();
+            this.getMoveBox().draw('red');
+            this.getBox().drawBottomY();
+        }
+    }
+
+    pickupAmmo(am){
+        this.ammo += am;
+        if(this.ammo > this.maxAmmo) this.ammo = this.maxAmmo;
+    }
 }
 
 class bullet extends moveableObject {
     damage;
-    constructor(type = 2, x = 0, y = 0, xSize = 0, ySize = 0, used = 1, speed = 2, xVec = 0, yVec = 0, damage_ = 0) {
+    textur;
+    constructor(type = 0,textur_, x = 0, y = 0, xSize = 0, ySize = 0, used = 1, speed = 2, xVec = 0, yVec = 0, damage_ = 0) {
         super(type, x, y, xSize, ySize, 0, used, speed, xVec, yVec);
         this.damage = damage_;
+        this.textur = new hitBox();
+        this.textur.copy(textur_);
     }
 
     draw() {
         if (this.used) {
-            ctx.drawImage(texturs, Math.round(bull.getX()), Math.round(bull.getY()), Math.round(bull.getXSize()), Math.round(bull.getYSize()), Math.round(this.getX() * k + cam.getX()), Math.round(this.getY() * k + cam.getY()), Math.round(this.box.getXSize() * k), Math.round(this.box.getYSize() * k));
+            ctx.save();
+            ctx.translate(Math.round(this.getX() * k + cam.getX()),Math.round(this.getY() * k + cam.getY()));
+            ctx.translate(Math.round(this.box.getXSize() * k/2),Math.round(this.box.getYSize() * k/2));
+            ctx.rotate(Math.atan(this.getVec2().y / this.getVec2().x));
+            ctx.translate(-Math.round(this.box.getXSize() * k/2),-Math.round(this.box.getYSize() * k/2));
+            if(this.vec2.getX() < 0){
+                ctx.translate(Math.round(this.box.getXSize()),0);
+                ctx.scale(-1,1);
+                ctx.translate( -Math.round(this.box.getXSize()),0);
+            }
+            //ctx.translate(Math.round(round(this.box.getXSize()),0);
+            ctx.drawImage(texturs, Math.round(this.textur.getX()), Math.round(this.textur.getY()), Math.round(this.textur.getXSize()), Math.round(this.textur.getYSize()), 0, 0, Math.round(this.box.getXSize() * k), Math.round(this.box.getYSize() * k));
+            ctx.restore();
         }
         if (debug) {
             this.box.draw();
@@ -320,9 +372,9 @@ class bullet extends moveableObject {
     }
 }
 
-class smallEnemyBullet extends bullet {
-    constructor(x = 0, y = 0, used = 1, speed = 2, xVec = 0, yVec = 0, damage = 1) {
-        super(types.enemyBulletType, x, y, sizes.smallBulletSize, sizes.smallBulletSize, used, speed, xVec, yVec, damage);
+class enemyBullet extends bullet{
+    constructor(textur,x = 0, y = 0,xSize = 2,ySize = 2,used = 1, speed = 2, xVec = 0, yVec = 0, damage = 0){
+        super(types.enemyBulletType,textur,x,y,xSize,ySize,used, speed, xVec, yVec, damage);
     }
     collision() {
         if (pla.collision(this)) {
@@ -331,6 +383,38 @@ class smallEnemyBullet extends bullet {
         }
         for (let i = 0; i < objects.length; i++) {
             if (objects[i].isUsed() && objects[i].isSolid() && objects[i].collision(this)) {
+                return 1;
+            }
+        }
+        if (this.getX() <= 0 || this.getX() >= gameMap.getSizeX() * sizes.tileTexturSize) return 1;
+        if (this.getY() <= 0 || this.getY() >= gameMap.getSizeY() * sizes.tileTexturSize) return 1;
+        return 0;
+    }
+
+}
+
+class smallEnemyBullet extends enemyBullet {
+    constructor(x = 0, y = 0, speed = 2, xVec = 0, yVec = 0, damage = 1) {
+        super(enemyBulletsTexturs[0], x, y, sizes.smallEnemyBulletSize, sizes.smallEnemyBulletSize, 1, speed, xVec, yVec, damage);
+    }
+
+}
+
+class bigEnemyBullet extends enemyBullet {
+    constructor(x = 0, y = 0, used = 1, speed = 1, xVec = 0, yVec = 0, damage = 3) {
+        super(enemyBulletsTexturs[1], x, y, sizes.bigEnemyBulletSize, sizes.bigEnemyBulletSize, used, speed, xVec, yVec, damage);
+    }
+}
+
+class playerBullet extends bullet{
+    constructor(textur,x = 0, y = 0,xSize = 2,ySize = 2,used = 1, speed = 2, xVec = 0, yVec = 0, damage = 0){
+        super(types.playerBulletType,textur,x,y,xSize,ySize,used,speed,xVec,yVec,damage);
+    }
+    collision(){
+        for(let i = 0; i < objects.length; i++){
+            if(objects[i].isUsed() && (objects[i].isSolid() || objects[i].getType() == 4) && (objects[i].collision(this))){
+                if(objects[i].getType() == 4) objects[i].damage(this.damage);
+
                 return 1;
             }
         }
@@ -340,23 +424,88 @@ class smallEnemyBullet extends bullet {
     }
 }
 
-class bigEnemyBullet extends bullet {
-    constructor(x = 0, y = 0, used = 1, speed = 1, xVec = 0, yVec = 0, damage = 3) {
-        super(types.enemyBulletType, x, y, sizes.BigBulletSize, sizes.BigBulletSize, used, speed, xVec, yVec, damage);
+class smallPlayerBullet extends playerBullet{
+    constructor(x = 0, y = 0, xVec = 0, yVec = 0){
+        super(playerBulletTexturs[1],x,y, sizes.smallPlayerBulletSize,sizes.smallPlayerBulletSize,1,bulletSpeeds.smallPlayerBulletSpeed,xVec,yVec,damages.smallPlayerBulletDamage);
+    }
+}
+
+class mediumPlayerBullet extends playerBullet{
+    constructor(x = 0, y = 0, xVec = 0, yVec = 0){
+        super(playerBulletTexturs[2],x,y, sizes.mediumPlayerBulletSize * 4,sizes.mediumPlayerBulletSize * 2,1,bulletSpeeds.mediumPlayerBulletSpeed,xVec,yVec,damages.mediumPlayerBulletDamage);
+    }
+}
+
+class bigPlayerBullet extends playerBullet{
+    constructor(x = 0, y = 0, xVec = 0, yVec = 0){
+        super(playerBulletTexturs[0],x,y, sizes.bigPlayerBulletSize * 4,sizes.bigPlayerBulletSize * 2,1,bulletSpeeds.bigPlayerBulletSpeed,xVec,yVec,damages.bigPlayerBulletDamage);
+    }
+}
+
+class arrow extends playerBullet{
+    constructor(x = 0, y = 0, xVec = 0, yVec = 0){
+        super(playerBulletTexturs[3],x,y, sizes.bigPlayerBulletSize * 4,sizes.bigPlayerBulletSize * 2,1,bulletSpeeds.arrowSpeed,xVec,yVec,damages.arrowDamage);
+    }
+}
+
+class enemy extends entity{
+    toRecharge;
+    attackSpeed;
+    constructor(x = 0, y = 0, xSize = 10,ySize = 10, speed = 2, stayAnim = playerStay, runAnim = playerRun, maxHp = 10, hp = 10, xVec = 0, yVec = 0){
+        super(4,x,y,xSize,ySize,0,1,speed,stayAnim,runAnim,maxHp,hp,xVec,yVec);
+        this.toRecharge = 200;
+        this.attackSpeed = 200;
+    }
+    draw() {
+        if (this.isRun) {
+            this.runAnim.draw(this.getX() * k + cam.getX(), this.getY() * k + cam.getY(), this.getBox().getXSize() * k, this.getBox().getYSize() * k, this.getX() > pla.getX());
+        } else {
+
+            this.stayAnim.draw(this.getX() * k + cam.getX(), this.getY() * k + cam.getY(), this.getBox().getXSize() * k, this.getBox().getYSize() * k, this.getX() > pla.getX());
+        }
+        if (debug) {
+            this.getBox().draw();
+            this.getMoveBox().draw('red');
+            this.getBox().drawBottomY();
+        }
+    }
+    move(){
+        let x = pla.getX() - this.getX();
+        let y = pla.getY() - this.getY();
+        let v = new vec2d(x,y);
+        this.box.move(v,this.maxSpeed);
+        if(Math.sqrt(x*x+y*y) < 300){
+            if(!this.toRecharge){
+                let b = new smallEnemyBullet(this.getX(),this.getY(),2,x,y,damages.smallEnemyBulletDamage);
+                objects.push(b);
+                this.toRecharge = this.attackSpeed;
+            }else this.toRecharge--;
+        }
     }
 
-    collision() {
-        if (pla.collision(this)) {
-            pla.damage(this.damage);
-            return 1;
-        }
-        for (let i = 0; i < objects.length; i++) {
-            if (objects[i].isUsed() && objects[i].isSolid() && objects[i].collision(this)) {
-                return 1;
+    damage(damage) {
+        this.hp -= damage;
+        if (this.hp <= 0){
+            this.used = 0;
+            if(Math.random() < 0.2){
+                let am = new smallAmmo(this.getX()+this.getBox().getXSize() - 6,this.getY() + this.getBox().getYSize() - 6, Math.round(Math.random() * 50));
+                objects.push(am);
             }
         }
-        if (this.getX() <= 0 || this.getX() >= gameMap.getSizeX() * sizes.tileTexturSize) return 1;
-        if (this.getY() <= 0 || this.getY() >= gameMap.getSizeY() * sizes.tileTexturSize) return 1;
-        return 0;
+
+    }
+}
+
+class smallAmmo extends staticObject{
+    ammoCount;
+    constructor(x = 0, y = 0,ammos = 10){
+        super(types.ammoType,x,y,6,6,0);
+        this.ammoCount = ammos;
+    }
+    getAmmo(){
+        return this.ammoCount;
+    }
+    draw(){
+        ctx.drawImage(texturs,ammoTexture.getX(),ammoTexture.getY(),ammoTexture.getXSize(),ammoTexture.getYSize(),this.getX()*k + cam.getX(),this.getY()*k + cam.getY(),this.getBox().getXSize()*k,this.getBox().getYSize()*k);
     }
 }

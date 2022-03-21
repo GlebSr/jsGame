@@ -15,7 +15,8 @@ canvas {
     top: 0;
     margin: 0px 0px 0px 0px;
     padding: 0px 0px 0px 0px;
-    cursor: url("../images/myCursor.png"), auto;
+    //cursor: url("../images/myCursor.png"), auto;
+    cursor: crosshair;
 }
 
 canvas{

@@ -63,7 +63,14 @@ class hitBox {
     }
 
     move(vec, speed) {
-        this.p.move(vec, speed);
+        let np = new point();
+        np.copy(this.p);
+        np.setX(np.getX() + this.xSize/2);
+        np.setY(np.getY() + this.ySize/2);
+        np.move(vec, speed);
+        np.setX(np.getX() - this.xSize/2);
+        np.setY(np.getY() - this.ySize/2);
+        this.p.copy(np);
     }
 
     resize(xSize_, ySize_) {
@@ -94,5 +101,9 @@ class hitBox {
     drawBottomY(color = "black") {
         ctx.strokeStyle = color;
         ctx.strokeRect(Math.round(this.getX() * k + k * this.getXSize() / 2 + cam.getX()), Math.round(this.getBottomY() * k + cam.getY()), 1, 1);
+    }
+
+    inBox(x,y){
+        return this.getX() <= x && x <= (this.getX() + this.xSize) && this.getY() <= y && y <= (this.getY() + this.ySize);
     }
 }

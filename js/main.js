@@ -40,6 +40,15 @@ function onKeydown(e) {
     if (e.key == 'a' || e.key == 'ф') activeKey.a = 1;
     if (e.key == 's' || e.key == 'ы') activeKey.s = 1;
     if (e.key == 'd' || e.key == 'в') activeKey.d = 1;
+    if(!pause){
+        if (e.key == '1' || e.key == '!') inv.chouseWeapon(1);
+        if (e.key == '2' || e.key == '@') inv.chouseWeapon(2);
+        if (e.key == '3' || e.key == '#') inv.chouseWeapon(3);
+        if (e.key == '4' || e.key == '$') inv.chouseWeapon(4);
+    }
+    if (e.keyCode == 27)
+        if(pause) pause = 0;
+        else pause = 1;
 }
 
 function onKeyup(e) {
@@ -49,9 +58,21 @@ function onKeyup(e) {
     if (e.key == 'd' || e.key == 'в') activeKey.d = 0;
 }
 
+function onMousedown(e){
+    if(menuStage == 1) {
+        if(!pause) if(e.which == 1) activeKey.l = 1;
+        if(pause) if(e.which == 1) pauseMen.click();
+    }
+    if(!menuStage) if(e.which == 1) men.click();
+    if(menuStage == 2) menuStage = 0;
+}
+
+function onMouseup(e){
+    if(e.which == 1) activeKey.l = 0;
+}
+
 function lcm(e) {
     if (e) {
-        console.log(e.which);
 
     }
 }
@@ -59,46 +80,83 @@ function lcm(e) {
 function rcm(e) {
     if (e) {
         e.preventDefault();
-        console.log(e.which);
     }
 }
 
-function init() {
-
+function start() {
+    men = new startMenu();
+    pauseMen = new pauseMenu();
+    endMen = new endMenu();
+    k = 2;
     window.addEventListener('keydown', onKeydown);
     window.addEventListener('keyup', onKeyup);
     window.addEventListener('click', lcm);
+    window.addEventListener('mousedown', onMousedown);
+    window.addEventListener('mouseup', onMouseup);
     document.addEventListener("contextmenu", rcm);
-
     ctx = document.getElementById("canvas").getContext("2d");
     texturs = new Image()
     texturs.src = "images/texturs.png";
-    objects = new Array();
     textursLoad();
-
-    gameMap = new map(10, 10);
-    pla = new player(100, 100, 2, 10, 5, 7, 3, 200, 180);
-    objects = new Array(1);
-    objects[0] = new wall(200, 300);
-    cam = new point(0, 0);
-    bull = new hitBox(120, 31, 9, 9);
-    objects[1] = new smallEnemyBullet(30, 30, 1, 2, 1, 1, 2);
-    objects[2] = new smallEnemyBullet(30, 30, 1, 2, 1, 1, 2);
-    objects[3] = new smallEnemyBullet(30, 30, 1, 2, 1, 1, 2);
-    machineGun = new crossbow();
-    generateMap();
-    bar = new statusBar();
     texturs.onload = function() {
 
         let myFont = new FontFace('myFont', 'url(PixeloidMono.ttf)');
         myFont.load().then((myFont) => {
             document.fonts.add(myFont);
+            menuStage = 0;
             setInterval(render, 10);
         });
 
     }
+}
 
+function init() {
+    spawnRate = 500;
+    toSpawn = 500;
+    menuStage = 1;
+    k = 2;
+    pause = 0;
+    szWindow = {
+        'x': 0,
+        'y': 0
+    };
+    mousePos = {
+        x: 0,
+        y: 0
+    };
+    activeKey = {
+        w: 0,
+        a: 0,
+        s: 0,
+        d: 0,
+        l: 0
+    };
+    damages = {
+        smallEnemyBulletDamage: 3,
+        bigEnemyBulletDamage: 6,
+        smallPlayerBulletDamage: 2,
+        mediumPlayerBulletDamage: 5,
+        bigPlayerBulletDamage: 3,
+        arrowDamage: 7
+    };
+    bulletSpeeds = {
+        smallEnemyBulletSpeed: 4,
+        bigEnemyBulletSpeed: 3,
+        smallPlayerBulletSpeed: 7,
+        mediumPlayerBulletSpeed: 4,
+        bigPlayerBulletSpeed: 4,
+        arrowSpeed: 7
+    };
+    inv = new inventory();
+    objects = new Array();
 
+    gameMap = new map(100, 100);
+    pla = new player(100, 100, 1, 10, 10, 7, 7, 200, 200);
+    objects = new Array();
+    cam = new point(0, 0);
+    bull = new hitBox(120, 31, 9, 9);
+    generateMap();
+    bar = new statusBar();
 }
 
 
@@ -144,4 +202,15 @@ function textursLoad() {
     for (let i = 0; i < 3; i++) {
         crossbowTexturs[i] = new hitBox(140 + i * 17, 62, 17, 12)
     }
+    enemyBulletsTexturs = new Array(2);
+    enemyBulletsTexturs[0] = new hitBox(120,31,sizes.smallEnemyBulletSize,sizes.smallEnemyBulletSize);
+    enemyBulletsTexturs[1] = new hitBox(95,82,sizes.bigEnemyBulletSize,sizes.bigEnemyBulletSize);
+    playerBulletTexturs = new Array(4);
+    playerBulletTexturs[0] = new hitBox(129,31,10,5);
+    playerBulletTexturs[1] = new hitBox(129,36,4,4);
+    playerBulletTexturs[2] = new hitBox(133,36,6,4);
+    playerBulletTexturs[3] = new hitBox(140,74,13,5);
+    button = new hitBox(33,116,120,20);
+    onButton = new hitBox(33,136,120,19);
+    ammoTexture = new hitBox(141,32,6,6);
 }

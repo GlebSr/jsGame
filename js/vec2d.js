@@ -2,7 +2,7 @@ class vec2d {
     x;
     y;
     constructor(x_ = 0, y_ = 0) {
-        if (x_ == 0 && y_ == 0) {
+        if (Math.abs(x_) <= 0.01 && Math.abs(y_) <= 0.01) {
             this.x = 0;
             this.y = 0;
         } else {
